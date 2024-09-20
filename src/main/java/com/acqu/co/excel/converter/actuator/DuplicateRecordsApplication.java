@@ -16,7 +16,7 @@ public class DuplicateRecordsApplication implements CommandLineRunner {
     public static void main(String[] args) {
         SpringApplication.run(DuplicateRecordsApplication.class, args);
     }
-
+//test
     @Override
     public void run(String... args) throws CsvValidationException {
         String inputFilePath = "C:\\Users\\mehme\\Desktop\\TestFolder\\faire-products.csv"; // path to the input CSV
