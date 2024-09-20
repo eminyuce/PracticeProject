@@ -24,7 +24,7 @@ public class HelloWorldService {
 
 	@Autowired
 	private ServiceProperties configuration;
-
+// test
 	public String getHelloMessage() {
 		return "Hello " + this.configuration.getName();
 	}
