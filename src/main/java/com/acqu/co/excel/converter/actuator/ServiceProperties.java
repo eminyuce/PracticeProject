@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "service", ignoreUnknownFields = false)
 @Component
 public class ServiceProperties {
-
+//test
 	private String name = "World";
 
 	public String getName() {
