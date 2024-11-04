@@ -36,16 +36,11 @@ public class SecurityConfiguration {
 
 		http.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests((authorize) -> authorize
-						.requestMatchers("/airportIds/exists/fedexAirportId/*", "/svcCodes/exists/fedexSvcCd/*",
-								"/tankeringFuelPrices/criteriaSearch*", "/tankeringFuelPrices/search*")
-						.permitAll() // Add anything here that has to bypass authentication.
-						// .requestMatchers("/aircraftDesc/**").hasAuthority(adminGroup)
-						.requestMatchers("/aircraftDesc/**").permitAll().requestMatchers("/airport/**").permitAll()
-						.requestMatchers("/countries/**").permitAll().requestMatchers("/states/**").permitAll()
-						.requestMatchers("/tmdStatusList/**").permitAll().requestMatchers("/tmdFx/**").permitAll()
-						.requestMatchers("/tmdVat/**").permitAll().requestMatchers("/tmdSettlementTypeList/**")
-						.permitAll().requestMatchers("/tmdUserEntity/**").permitAll().requestMatchers("/tmdEntity/**")
-						.permitAll().requestMatchers("/tmdUsersPermissions/**").permitAll()
+					 
+			 
+						.requestMatchers("/api/acqu-users/**").permitAll() 
+			 
+				 
 
 						.anyRequest().authenticated())
 				.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
