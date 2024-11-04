@@ -51,6 +51,18 @@ acquUserEntityRepository.deleteByIds(idsToDelete);
         return acquUserEntityRepository.saveAll(users);
     }
     
+    @Override
+    public Page<AcquUserEntity> findAll(String search, Pageable pageable) {
+        Specification<AcquUserEntity> spec = Specification.where(null);
+
+        if (search != null && !search.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.get("name"), "%" + search + "%"));
+        }
+
+        return acquUserEntityRepository.findAll(spec, pageable);
+    }
+
     private List<AcquUserEntity> parseExcelFileForAcquUserEntity(MultipartFile file) throws IOException, ExcelImportException {
         List<AcquUserEntity> acquUserEntities = new ArrayList<>();
         // Create a Set to track unique userEntityIds

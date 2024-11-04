@@ -20,5 +20,5 @@ public interface AcquUserEntityService {
 
 	@Transactional
 	List<AcquUserEntity> uploadAcquUserEntityFromExcel(MultipartFile file) throws IOException, ExcelImportException;
-
+	Page<AcquUserEntity> findAll(String search, Pageable pageable) ;
 }

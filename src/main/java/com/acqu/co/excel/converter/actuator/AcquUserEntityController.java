@@ -54,4 +54,14 @@ public class AcquUserEntityController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
+    @GetMapping
+    public ResponseEntity<Page<AcquUserEntity>> getAllAcquUsers(
+            @RequestParam(required = false) String search,
+            @PageableDefault(sort = "userEntityId", direction = Sort.Direction.ASC) Pageable pageable) {
+
+        Page<AcquUserEntity> users = acquUserEntityService.findAll(search, pageable);
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+    
 }
