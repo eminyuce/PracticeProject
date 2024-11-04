@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 public class ServiceProperties {
 //test
 	private String name = "World";
-
+// TEST11
 	public String getName() {
 		return this.name;
 	}
