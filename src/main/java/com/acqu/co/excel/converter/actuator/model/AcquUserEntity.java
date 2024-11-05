@@ -11,14 +11,6 @@ import lombok.*;
 
 @Entity
 @Table(name = "AcquUserEntity")
-@NoArgsConstructor  // Default constructor
-@AllArgsConstructor // Constructor with all fields
-@RequiredArgsConstructor // Constructor with fields that are `final` or `@NonNull`
-@Data
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
 public class AcquUserEntity implements Serializable {
 
     /**
