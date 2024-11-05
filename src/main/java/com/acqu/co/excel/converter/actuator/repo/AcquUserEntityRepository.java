@@ -1,8 +1,4 @@
-
-
 package com.acqu.co.excel.converter.actuator.repo;
-
-import java.util.List;
 
 import com.acqu.co.excel.converter.actuator.model.AcquUserEntity;
 import org.springframework.data.domain.Sort;
@@ -11,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @Repository

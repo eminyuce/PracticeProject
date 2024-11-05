@@ -1,9 +1,9 @@
 package com.acqu.co.excel.converter.actuator.config;
 
-import javax.sql.DataSource;
-
+import com.zaxxer.hikari.HikariDataSource;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
@@ -14,9 +14,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.zaxxer.hikari.HikariDataSource;
-
-import jakarta.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "com.acqu.co.excel.converter.actuator.repo", // Set the correct repository package
@@ -24,12 +22,39 @@ import jakarta.persistence.EntityManagerFactory;
         transactionManagerRef = "acquTransactionManager")
 public class AccoDbConfig {
 
+    // Inject values from application.yml using @Value annotation
+    @Value("${spring.datasource.url}")
+    private String url;
+
+    @Value("${spring.datasource.username}")
+    private String username;
+
+    @Value("${spring.datasource.password}")
+    private String password;
+
+    @Value("${spring.datasource.driverClassName}")
+    private String driverClassName;
+
+    @Value("${spring.jpa.database-platform}")
+    private String dialect;
+
+    @Value("${spring.jpa.hibernate.ddl-auto}")
+    private String ddlAuto;
+
+    @Value("${spring.jpa.show-sql}")
+    private boolean showSql;
+
     // Define the main DataSource
     @Primary
     @Bean(name = "acquDataSource")
-    @ConfigurationProperties(prefix = "datasource.acqu")
     public DataSource acquDataSource() {
-        return DataSourceBuilder.create().type(HikariDataSource.class).build();
+        return DataSourceBuilder.create()
+                .url(url)  // Injected via @Value
+                .username(username)  // Injected via @Value
+                .password(password)  // Injected via @Value
+                .driverClassName(driverClassName)  // Injected via @Value
+                .type(HikariDataSource.class)  // Using HikariCP as the connection pool
+                .build();  // Builds the DataSource
     }
 
     // Configure the EntityManagerFactory

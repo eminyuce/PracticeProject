@@ -1,18 +1,24 @@
 package com.acqu.co.excel.converter.actuator.model;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
+import java.io.Serializable;
+import java.util.Date;
+
 @Entity
 @Table(name = "AcquUserEntity")
+@Data
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 public class AcquUserEntity implements Serializable {
-
     /**
      *
      */
@@ -31,35 +37,4 @@ public class AcquUserEntity implements Serializable {
     @Column(name = "updated_date")
     private Date updatedDate;
 
-    public String getUserEntityId() {
-        return userEntityId;
-    }
-
-    public void setUserEntityId(String userEntityId) {
-        this.userEntityId = userEntityId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
-    }
 }
