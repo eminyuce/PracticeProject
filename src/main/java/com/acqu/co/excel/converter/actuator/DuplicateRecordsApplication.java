@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EntityScan(basePackages = "com.acqu.co.excel.converter.actuator.model")
-public class DuplicateRecordsApplication implements CommandLineRunner {
+public class DuplicateRecordsApplication   {
 
     @Autowired
     private CsvProcessor csvProcessor;
@@ -21,7 +21,6 @@ public class DuplicateRecordsApplication implements CommandLineRunner {
     }
 
     //test
-    @Override
     public void run(String... args) {
         String inputFilePath = "C:\\Users\\mehme\\Desktop\\TestFolder\\faire-products.csv"; // path to the input CSV
         String outputFilePath = "C:\\Users\\mehme\\Desktop\\TestFolder\\faire-products-output_v4.csv"; // path to the output CSV

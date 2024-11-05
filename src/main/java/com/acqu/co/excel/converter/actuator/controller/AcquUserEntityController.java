@@ -60,8 +60,8 @@ public class AcquUserEntityController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<Page<AcquUserEntity>> getAllAcquUsers(
+    @GetMapping("/paging")
+    public ResponseEntity<Page<AcquUserEntity>> getPageAcquUsers(
             @RequestParam(required = false) String search,
             @PageableDefault(sort = "userEntityId", direction = Sort.Direction.ASC) Pageable pageable) {
 
