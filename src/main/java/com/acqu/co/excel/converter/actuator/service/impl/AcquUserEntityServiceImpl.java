@@ -1,9 +1,21 @@
 
 
-package com.acqu.co.excel.converter.actuator;
+package com.acqu.co.excel.converter.actuator.service.impl;
 
+import com.acqu.co.excel.converter.actuator.exception.ExcelImportException;
+import com.acqu.co.excel.converter.actuator.model.AcquUserEntity;
+import com.acqu.co.excel.converter.actuator.repo.AcquUserEntityRepository;
+import com.acqu.co.excel.converter.actuator.service.AcquUserEntityService;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,7 +24,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class AcquUserEntityServiceImpl implements AcquUserEntityService {
@@ -39,18 +53,16 @@ public class AcquUserEntityServiceImpl implements AcquUserEntityService {
     @Transactional
     public List<AcquUserEntity> uploadAcquUserEntityFromExcel(MultipartFile file) throws IOException, ExcelImportException {
         List<AcquUserEntity> users = parseExcelFileForAcquUserEntity(file);
-         // Delete existing records by their IDs
-    List<String> idsToDelete = users.stream()
-    .map(AcquUserEntity::getUserEntityId) // Use the correct getter
-    .toList();
-if (!idsToDelete.isEmpty()) {
-acquUserEntityRepository.deleteByIds(idsToDelete);
-}
+        // Delete existing records by their IDs
+        List<String> idsToDelete = null;
+        if (!idsToDelete.isEmpty()) {
+            acquUserEntityRepository.deleteByIds(idsToDelete);
+        }
 
 // Save the new records
         return acquUserEntityRepository.saveAll(users);
     }
-    
+
     @Override
     public Page<AcquUserEntity> findAll(String search, Pageable pageable) {
         Specification<AcquUserEntity> spec = Specification.where(null);
@@ -60,31 +72,32 @@ acquUserEntityRepository.deleteByIds(idsToDelete);
                     criteriaBuilder.like(root.get("name"), "%" + search + "%"));
         }
 
-        return acquUserEntityRepository.findAll(spec, pageable);
+        //return acquUserEntityRepository.findAll(spec, pageable);
+        return null;
     }
 
     private List<AcquUserEntity> parseExcelFileForAcquUserEntity(MultipartFile file) throws IOException, ExcelImportException {
         List<AcquUserEntity> acquUserEntities = new ArrayList<>();
         // Create a Set to track unique userEntityIds
         Set<String> existingIds = new HashSet<>();
-        
+
         try (XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream())) {
             XSSFSheet sheet = workbook.getSheetAt(0);
-            
+
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) {
                     continue; // Skip header row
                 }
-                
+
                 AcquUserEntity entity = new AcquUserEntity();
                 String userEntityId = row.getCell(0).getStringCellValue();
-    
+
                 // Check for duplicate userEntityId
                 if (existingIds.contains(userEntityId)) {
                     throw new ExcelImportException("Duplicate ID found: " + userEntityId);
                 }
                 existingIds.add(userEntityId); // Add to the set for tracking
-                
+
                 entity.setUserEntityId(userEntityId);
                 entity.setUserName(row.getCell(1).getStringCellValue());
                 entity.setCreatedDate(row.getCell(2).getDateCellValue());
@@ -92,17 +105,17 @@ acquUserEntityRepository.deleteByIds(idsToDelete);
                 acquUserEntities.add(entity);
             }
         }
-        
+
         return acquUserEntities;
     }
-    
+
     private InputStreamResource createWorkbook(List<AcquUserEntity> all) throws IOException {
         if (all == null || all.isEmpty()) {
             return null;
         }
 
         String sheetName = "AcquUserEntity";
-        String[] headers = { "User Entity ID", "User Name", "Created Date", "Updated Date" };
+        String[] headers = {"User Entity ID", "User Name", "Created Date", "Updated Date"};
 
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -149,22 +162,5 @@ acquUserEntityRepository.deleteByIds(idsToDelete);
         }
     }
 
-    private List<AcquUserEntity> parseExcelFileForAcquUserEntity(MultipartFile file) throws IOException {
-        List<AcquUserEntity> acquUserEntities = new ArrayList<>();
-        try (XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream())) {
-            XSSFSheet sheet = workbook.getSheetAt(0);
-            for (Row row : sheet) {
-                if (row.getRowNum() == 0) {
-                    continue; // Skip header row
-                }
-                AcquUserEntity entity = new AcquUserEntity();
-                entity.setUserEntityId(row.getCell(0).getStringCellValue());
-                entity.setUserName(row.getCell(1).getStringCellValue());
-                entity.setCreatedDate(row.getCell(2).getDateCellValue());
-                entity.setUpdatedDate(row.getCell(3).getDateCellValue());
-                acquUserEntities.add(entity);
-            }
-        }
-        return acquUserEntities;
-    }
+
 }

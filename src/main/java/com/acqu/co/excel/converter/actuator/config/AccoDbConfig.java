@@ -1,4 +1,4 @@
-package com.acqu.co.excel.converter.actuator;
+package com.acqu.co.excel.converter.actuator.config;
 
 import javax.sql.DataSource;
 
@@ -24,28 +24,28 @@ import jakarta.persistence.EntityManagerFactory;
 @EnableJpaRepositories(basePackages = "com.acqu.co.excel", entityManagerFactoryRef = "acquEntityManagerFactory", transactionManagerRef = "acquTransactionManager")
 public class AccoDbConfig {
 
-	@Bean(name = "acquDataSource")
-	@ConfigurationProperties(prefix = "datasource.acqu")
-	@Primary
-	public DataSource acquDataSource() {
+    @Bean(name = "acquDataSource")
+    @ConfigurationProperties(prefix = "datasource.acqu")
+    @Primary
+    public DataSource acquDataSource() {
 
-		return DataSourceBuilder.create().type(HikariDataSource.class).build(); // type is not necessary, it assumes
-																				// this from classpath
-	}
+        return DataSourceBuilder.create().type(HikariDataSource.class).build(); // type is not necessary, it assumes
+        // this from classpath
+    }
 
-	@Primary
-	@Bean(name = "acquEntityManagerFactory")
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
-			@Qualifier("acquDataSource") DataSource dataSource) {
+    @Primary
+    @Bean(name = "acquEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
+                                                                       @Qualifier("acquDataSource") DataSource dataSource) {
 
-		return builder.dataSource(dataSource).packages("com.acqu.model").persistenceUnit("acqu").build();
-	}
+        return builder.dataSource(dataSource).packages("com.acqu.model").persistenceUnit("acqu").build();
+    }
 
-	@Primary
-	@Bean(name = "acquTransactionManager")
-	public PlatformTransactionManager transactionManager(
-			@Qualifier("acquEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
-		return new JpaTransactionManager(entityManagerFactory);
-	}
+    @Primary
+    @Bean(name = "acquTransactionManager")
+    public PlatformTransactionManager transactionManager(
+            @Qualifier("acquEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
+    }
 
 }

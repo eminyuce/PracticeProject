@@ -1,8 +1,13 @@
 
-package com.acqu.co.excel.converter.actuator;
+package com.acqu.co.excel.converter.actuator.controller;
 
+import com.acqu.co.excel.converter.actuator.model.AcquUserEntity;
+import com.acqu.co.excel.converter.actuator.service.AcquUserEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +55,7 @@ public class AcquUserEntityController {
         try {
             List<AcquUserEntity> users = acquUserEntityService.uploadAcquUserEntityFromExcel(file);
             return new ResponseEntity<>(users, HttpStatus.CREATED);
-        } catch (IOException | ExcelImportException e) {
+        } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
@@ -63,5 +68,5 @@ public class AcquUserEntityController {
         Page<AcquUserEntity> users = acquUserEntityService.findAll(search, pageable);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-    
+
 }

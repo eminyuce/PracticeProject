@@ -144,13 +144,24 @@
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>9.39.1</version>
         </dependency>
-        
-        <!-- Test dependencies -->
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>  <!-- Always check for the latest version -->
+        </dependency>
+        <!-- H2 Database for in-memory DB -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
+            <scope>runtime</scope>
         </dependency>
+        <!-- Test dependencies -->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
