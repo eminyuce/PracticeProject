@@ -1,0 +1,51 @@
+logging:
+  file: /tmp/logs/app.log
+
+management:
+  address: 127.0.0.1
+  endpoints:
+    shutdown:
+      enabled: true
+
+server:
+  tomcat:
+    basedir: target/tomcat
+    access_log_pattern: '%h %t "%r" %s %b'
+
+security:
+  require_ssl: false
+
+service:
+  name: Phil
+
+shell:
+  ssh:
+    enabled: true
+    port: 2222
+  auth: spring
+
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 2MB
+      max-request-size: 2MB
+  jmx:
+    enabled: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/world?useSSL=false&serverTimezone=UTC
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    hikari:
+      maximum-pool-size: 10  # Optional, adjust the connection pool size if needed
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect  # Use MySQL dialect
+    hibernate:
+      ddl-auto: update  # Optional: update schema automatically on app startup (can be 'none', 'create', 'create-drop', etc.)
+    show-sql: true
+    properties:
+      hibernate.format_sql: true  # Optional: formats SQL logs to be more readable
+  h2:
+    console:
+      enabled: false  # Explicitly disable H2 console
