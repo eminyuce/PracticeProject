@@ -24,22 +24,23 @@ shell:
     port: 2222
   auth: spring
 
-
-
 spring:
   jmx:
     enabled: true
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driverClassName: org.h2.Driver
-    username: sa
-    password: password
+    url: jdbc:mysql://localhost:3306/world?useSSL=false&serverTimezone=UTC
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    hikari:
+      maximum-pool-size: 10  # Optional, adjust the connection pool size if needed
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect  # Use MySQL dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: update  # Optional: update schema automatically on app startup (can be 'none', 'create', 'create-drop', etc.)
     show-sql: true
+    properties:
+      hibernate.format_sql: true  # Optional: formats SQL logs to be more readable
   h2:
     console:
-      enabled: true
-      path: /h2-console
+      enabled: false  # Explicitly disable H2 console

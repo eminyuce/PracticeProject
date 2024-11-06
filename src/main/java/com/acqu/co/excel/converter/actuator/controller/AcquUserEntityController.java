@@ -42,7 +42,7 @@ public class AcquUserEntityController {
             InputStreamResource resource = acquUserEntityService.exportXls();
             HttpHeaders headers = new HttpHeaders();
 
-            String fileName = "AcquUserEntities_" + DateUtil.getFormattedDateStr();
+            String fileName = "AcquUserEntities_" + DateUtil.getFormattedDateStr()+".xlsx";
 
             headers.add("Content-Disposition", "attachment; filename=" + fileName);
             return ResponseEntity.ok()
