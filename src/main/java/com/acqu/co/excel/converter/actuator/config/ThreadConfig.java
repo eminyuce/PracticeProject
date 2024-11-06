@@ -22,5 +22,4 @@ public class ThreadConfig {
 
         return executor;
     }
-
 }
