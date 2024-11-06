@@ -1,7 +1,6 @@
 package com.acqu.co.excel.converter.actuator.config;
 
 
-
 import com.okta.spring.boot.oauth.Okta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

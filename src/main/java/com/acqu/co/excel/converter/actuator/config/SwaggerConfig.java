@@ -33,5 +33,4 @@ public class SwaggerConfig {
                                 .bearerFormat("JWT")))
                 .security(Arrays.asList(new SecurityRequirement().addList("bearer-key")));
     }
-
 }
