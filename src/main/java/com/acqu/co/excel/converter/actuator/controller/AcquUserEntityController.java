@@ -16,10 +16,10 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -48,8 +48,8 @@ public class AcquUserEntityController {
             HttpHeaders headers = new HttpHeaders();
 
             String fileName = "AcquUserEntities_" + DateUtil.getFormattedDateStr()+".xlsx";
-
             headers.add("Content-Disposition", "attachment; filename=" + fileName);
+
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(resource);
