@@ -1,17 +1,13 @@
 package com.acqu.co.excel.converter.actuator.controller;
 
-import com.acqu.co.excel.converter.actuator.exception.GlobalExceptionHandler;
 import com.acqu.co.excel.converter.actuator.exception.ServiceStatus;
 import com.acqu.co.excel.converter.actuator.model.AcquUserEntity;
 import com.acqu.co.excel.converter.actuator.service.AcquUserEntityService;
 import com.acqu.co.excel.converter.actuator.util.DateUtil;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
@@ -54,7 +50,7 @@ public class AcquUserEntityController {
             InputStreamResource resource = acquUserEntityService.exportXls();
             HttpHeaders headers = new HttpHeaders();
 
-            String fileName = "AcquUserEntities_" + DateUtil.getFormattedDateStr()+".xlsx";
+            String fileName = "AcquUserEntities_" + DateUtil.getFormattedDateStr() + ".xlsx";
 
             headers.add("Content-Disposition", "attachment; filename=" + fileName);
             return ResponseEntity.ok()
