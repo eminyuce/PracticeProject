@@ -1,5 +1,7 @@
 package com.acqu.co.excel.converter.actuator.controller;
 
+import com.acqu.co.excel.converter.actuator.exception.GlobalExceptionHandler;
+import com.acqu.co.excel.converter.actuator.exception.ServiceStatus;
 import com.acqu.co.excel.converter.actuator.model.AcquUserEntity;
 import com.acqu.co.excel.converter.actuator.service.AcquUserEntityService;
 import com.acqu.co.excel.converter.actuator.util.DateUtil;
@@ -7,6 +9,9 @@ import com.acqu.co.excel.converter.actuator.util.DateUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
@@ -25,7 +30,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/acqu-users")
+@Slf4j
 public class AcquUserEntityController {
+
 
     private final AcquUserEntityService acquUserEntityService;
 
@@ -58,7 +65,7 @@ public class AcquUserEntityController {
         }
     }
 
-    @PostMapping("/upload")
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(
             summary = "Upload an Excel file with AcquUserEntity data",
             description = "Upload a file containing user data in Excel format.",
@@ -66,14 +73,23 @@ public class AcquUserEntityController {
                     content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
             )
     )
-    public ResponseEntity<List<AcquUserEntity>> uploadAcquUserEntityFromExcel(
+    public ResponseEntity<?> uploadAcquUserEntityFromExcel(
             @Parameter(description = "Excel file to upload", required = true)
-            @RequestParam("file") MultipartFile file) {
+            @RequestPart("file") MultipartFile file, @RequestHeader HttpHeaders requestHeader) {
         try {
             List<AcquUserEntity> users = acquUserEntityService.uploadAcquUserEntityFromExcel(file);
             return new ResponseEntity<>(users, HttpStatus.CREATED);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            // Generic exception handler for unexpected errors
+            ServiceStatus errorResponse = new ServiceStatus(
+                    "Unexpected error occurred",
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "UNEXPECTED_ERROR"
+            );
+
+            log.error("Unexpected error: {}", e.getMessage(), e);
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 

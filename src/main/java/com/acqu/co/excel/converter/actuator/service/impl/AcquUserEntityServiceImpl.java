@@ -5,6 +5,7 @@ import com.acqu.co.excel.converter.actuator.model.AcquUserEntity;
 import com.acqu.co.excel.converter.actuator.repo.AcquUserEntityRepository;
 import com.acqu.co.excel.converter.actuator.service.AcquUserEntityService;
 import com.acqu.co.excel.converter.actuator.util.ExcelHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
+@Slf4j
 public class AcquUserEntityServiceImpl implements AcquUserEntityService {
 
     @Autowired

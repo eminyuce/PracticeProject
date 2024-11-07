@@ -1,6 +1,7 @@
 package com.acqu.co.excel.converter.actuator.exception;
 
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +15,8 @@ import org.springframework.web.context.request.WebRequest;
 
 
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ServiceStatus> globalExceptionHandler(Exception ex, WebRequest request) {
@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<ServiceStatus> handleException(Exception ex, WebRequest request, HttpStatus httpStatus) {
-        LOGGER.error("An exception occurred", ex);
+        log.error("An exception occurred", ex);
 
         ServiceStatus apiError = new ServiceStatus();
         apiError.setMessage(ex.getMessage());
