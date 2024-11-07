@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>com.example</groupId>
-    <artifactId>DuplicateRecords</artifactId>
+    <artifactId>duplicate-records</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
     
@@ -152,7 +152,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.24</version>  <!-- Always check for the latest version -->
+            <version>1.18.34</version>  <!-- Always check for the latest version -->
         </dependency>
         <!-- H2 Database for in-memory DB -->
         <dependency>
