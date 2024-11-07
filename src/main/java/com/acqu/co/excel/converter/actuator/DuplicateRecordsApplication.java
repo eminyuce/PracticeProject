@@ -18,11 +18,7 @@ public class DuplicateRecordsApplication {
         SpringApplication.run(DuplicateRecordsApplication.class, args);
     }
 
-    //test
     public void run(String... args) {
-        String inputFilePath = "C:\\Users\\mehme\\Desktop\\TestFolder\\faire-products.csv"; // path to the input CSV
-        String outputFilePath = "C:\\Users\\mehme\\Desktop\\TestFolder\\faire-products-output_v4.csv"; // path to the output CSV
-        //csvProcessor.processCsv(inputFilePath, outputFilePath);
         System.out.println("DONE");
 
         csvProcessor.printTest();

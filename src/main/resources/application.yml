@@ -33,14 +33,13 @@ spring:
   jmx:
     enabled: true
   datasource:
-    url: jdbc:mysql://localhost:3306/world?useSSL=false&serverTimezone=UTC
+    url: ${SPRING_DATASOURCE_URL}
     driverClassName: com.mysql.cj.jdbc.Driver
-    username: root
-    password: root
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     hikari:
       maximum-pool-size: 10  # Optional, adjust the connection pool size if needed
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect  # Use MySQL dialect
     hibernate:
       ddl-auto: update  # Optional: update schema automatically on app startup (can be 'none', 'create', 'create-drop', etc.)
     show-sql: true
