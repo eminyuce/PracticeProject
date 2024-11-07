@@ -24,11 +24,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+import static com.acqu.co.excel.converter.actuator.util.Constants.*;
+
 @RestController
 @RequestMapping("/api/acqu-users")
 @Slf4j
 public class AcquUserEntityController {
-
 
     private final AcquUserEntityService acquUserEntityService;
 
@@ -45,19 +46,24 @@ public class AcquUserEntityController {
     }
 
     @GetMapping("/export")
-    public ResponseEntity<InputStreamResource> exportAcquUserEntities() {
+    public ResponseEntity<?>  exportAcquUserEntities() {
         try {
             InputStreamResource resource = acquUserEntityService.exportXls();
             HttpHeaders headers = new HttpHeaders();
 
             String fileName = "AcquUserEntities_" + DateUtil.getFormattedDateStr() + ".xlsx";
 
-            headers.add("Content-Disposition", "attachment; filename=" + fileName);
+            headers.add(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName);
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(resource);
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            log.error("Unexpected error: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ServiceStatus(
+                    "Unexpected error occurred",
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    e.getMessage()
+            ));
         }
     }
 
@@ -76,16 +82,12 @@ public class AcquUserEntityController {
             List<AcquUserEntity> users = acquUserEntityService.uploadAcquUserEntityFromExcel(file);
             return new ResponseEntity<>(users, HttpStatus.CREATED);
         } catch (Exception e) {
-            // Generic exception handler for unexpected errors
-            ServiceStatus errorResponse = new ServiceStatus(
+            log.error("Unexpected error: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ServiceStatus(
                     "Unexpected error occurred",
                     HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    "UNEXPECTED_ERROR"
-            );
-
-            log.error("Unexpected error: {}", e.getMessage(), e);
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+                    e.getMessage()
+            ));
         }
     }
 
