@@ -9,13 +9,13 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @SpringBootApplication
 @EntityScan(basePackages = "com.acqu.co.excel.converter.actuator.model")
-public class DuplicateRecordsApplication {
+public class PracticeProjectApp {
 
     @Autowired
     private CsvProcessor csvProcessor;
 
     public static void main(String[] args) {
-        SpringApplication.run(DuplicateRecordsApplication.class, args);
+        SpringApplication.run(PracticeProjectApp.class, args);
     }
 
     public void run(String... args) {
