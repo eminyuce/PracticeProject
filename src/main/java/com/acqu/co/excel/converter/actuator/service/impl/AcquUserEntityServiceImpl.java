@@ -2,6 +2,9 @@ package com.acqu.co.excel.converter.actuator.service.impl;
 
 import com.acqu.co.excel.converter.actuator.exception.ExcelImportException;
 import com.acqu.co.excel.converter.actuator.model.AcquUserEntity;
+import com.acqu.co.excel.converter.actuator.model.specs.AcquUserEntitySearchParams;
+import com.acqu.co.excel.converter.actuator.model.specs.AcquUserEntitySpecification;
+import com.acqu.co.excel.converter.actuator.model.specs.CustomPageable;
 import com.acqu.co.excel.converter.actuator.repo.AcquUserEntityRepository;
 import com.acqu.co.excel.converter.actuator.service.AcquUserEntityService;
 import com.acqu.co.excel.converter.actuator.util.ExcelHelper;
@@ -57,14 +60,9 @@ public class AcquUserEntityServiceImpl implements AcquUserEntityService {
     }
 
     @Override
-    public Page<AcquUserEntity> findAll(String search, Pageable pageable) {
-        Specification<AcquUserEntity> spec = Specification.where(null);
-
-        if (search != null && !search.isEmpty()) {
-            spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.get("name"), "%" + search + "%"));
-        }
-        //return acquUserEntityRepository.findAll(spec, pageable);
-        return null;
+    public Page<AcquUserEntity> findAll(AcquUserEntitySearchParams acquUserEntitySearchParams) {
+        return acquUserEntityRepository.findAll(
+                new AcquUserEntitySpecification(acquUserEntitySearchParams.getSearch()),
+                acquUserEntitySearchParams.getPageable().toPageRequest());
     }
 }

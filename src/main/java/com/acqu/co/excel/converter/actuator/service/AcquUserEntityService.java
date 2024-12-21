@@ -1,6 +1,8 @@
 package com.acqu.co.excel.converter.actuator.service;
 
 import com.acqu.co.excel.converter.actuator.model.AcquUserEntity;
+import com.acqu.co.excel.converter.actuator.model.specs.AcquUserEntitySearchParams;
+import com.acqu.co.excel.converter.actuator.model.specs.CustomPageable;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,5 +25,5 @@ public interface AcquUserEntityService {
     @Transactional
     List<AcquUserEntity> uploadAcquUserEntityFromExcel(MultipartFile file) throws IOException;
 
-    Page<AcquUserEntity> findAll(String search, Pageable pageable);
+    Page<AcquUserEntity> findAll(AcquUserEntitySearchParams acquUserEntitySearchParams);
 }

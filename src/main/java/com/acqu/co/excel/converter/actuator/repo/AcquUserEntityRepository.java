@@ -3,6 +3,7 @@ package com.acqu.co.excel.converter.actuator.repo;
 import com.acqu.co.excel.converter.actuator.model.AcquUserEntity;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,7 @@ import java.util.List;
 
 
 @Repository
-public interface AcquUserEntityRepository extends JpaRepository<AcquUserEntity, String> {
+public interface AcquUserEntityRepository extends JpaRepository<AcquUserEntity, String>, JpaSpecificationExecutor<AcquUserEntity> {
 
     List<AcquUserEntity> findAll(Sort sort);
 

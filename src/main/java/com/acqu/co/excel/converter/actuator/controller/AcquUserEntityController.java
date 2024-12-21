@@ -2,6 +2,9 @@ package com.acqu.co.excel.converter.actuator.controller;
 
 import com.acqu.co.excel.converter.actuator.exception.ServiceStatus;
 import com.acqu.co.excel.converter.actuator.model.AcquUserEntity;
+import com.acqu.co.excel.converter.actuator.model.specs.AcquUserEntitySearchParams;
+import com.acqu.co.excel.converter.actuator.model.specs.CustomPageable;
+import com.acqu.co.excel.converter.actuator.model.specs.CustomSort;
 import com.acqu.co.excel.converter.actuator.service.AcquUserEntityService;
 import com.acqu.co.excel.converter.actuator.util.DateUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -91,12 +94,16 @@ public class AcquUserEntityController {
         }
     }
 
-    @GetMapping("/paging")
-    public ResponseEntity<Page<AcquUserEntity>> getPageAcquUsers(
-            @RequestParam(required = false) String search,
-            @PageableDefault(sort = "userEntityId", direction = Sort.Direction.ASC) Pageable pageable) {
+    @PostMapping(value = "/paging", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "paging with AcquUserEntity data",
+            description = "paging user data in Excel format."
+    )
+    public ResponseEntity<Page<AcquUserEntity>> getAcquUserEntityBySearch(
+         @RequestBody   AcquUserEntitySearchParams acquUserEntitySearchParams) {
 
-        Page<AcquUserEntity> users = acquUserEntityService.findAll(search, pageable);
+
+        Page<AcquUserEntity> users = acquUserEntityService.findAll(acquUserEntitySearchParams);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
