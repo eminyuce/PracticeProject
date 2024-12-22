@@ -110,4 +110,6 @@ public class AcquUserEntityController {
         Page<AcquUserEntity> users = acquUserEntityService.findAll(acquUserEntitySearchParams);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
+
 }

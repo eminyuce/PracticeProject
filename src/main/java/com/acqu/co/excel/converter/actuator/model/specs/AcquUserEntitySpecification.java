@@ -13,18 +13,18 @@ import java.util.List;
 
 public class AcquUserEntitySpecification implements Specification<AcquUserEntity> {
 
-    private final String search;
+    private final AcquUserEntitySearchParams acquUserEntitySearchParams;
 
-    public AcquUserEntitySpecification(String search) {
-        this.search = search;
+    public AcquUserEntitySpecification(AcquUserEntitySearchParams acquUserEntitySearchParams) {
+        this.acquUserEntitySearchParams = acquUserEntitySearchParams;
     }
 
     @Override
     public Predicate toPredicate(Root<AcquUserEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
-        if (StringUtils.hasText(search)) {
+        if (StringUtils.hasText(acquUserEntitySearchParams.getSearch())) {
             predicates.add(cb.or(
-                    cb.like(root.get("userName"), "%" + search + "%")
+                    cb.like(root.get("userName"), "%" + acquUserEntitySearchParams.getSearch() + "%")
             ));
         }
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));

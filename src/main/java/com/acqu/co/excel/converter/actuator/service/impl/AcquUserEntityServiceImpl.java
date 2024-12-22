@@ -8,6 +8,7 @@ import com.acqu.co.excel.converter.actuator.repo.AcquUserEntityRepository;
 import com.acqu.co.excel.converter.actuator.service.AcquUserEntityService;
 import com.acqu.co.excel.converter.actuator.util.ExcelHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
@@ -47,7 +48,7 @@ public class AcquUserEntityServiceImpl implements AcquUserEntityService {
         List<String> idsToDelete = users.stream()
                 .map(AcquUserEntity::getUserEntityId)
                 .toList();
-        if (!idsToDelete.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(idsToDelete)) {
             acquUserEntityRepository.deleteByIds(idsToDelete);
         }
         // Save the new records
@@ -57,7 +58,7 @@ public class AcquUserEntityServiceImpl implements AcquUserEntityService {
     @Override
     public Page<AcquUserEntity> findAll(AcquUserEntitySearchParams acquUserEntitySearchParams) {
         return acquUserEntityRepository.findAll(
-                new AcquUserEntitySpecification(acquUserEntitySearchParams.getSearch()),
+                new AcquUserEntitySpecification(acquUserEntitySearchParams),
                 acquUserEntitySearchParams.getPageable().toPageRequest());
     }
 
@@ -70,7 +71,7 @@ public class AcquUserEntityServiceImpl implements AcquUserEntityService {
             List<String> idsToDelete = users.stream()
                     .map(AcquUserEntity::getUserEntityId)
                     .toList();
-            if (!idsToDelete.isEmpty()) {
+            if (CollectionUtils.isNotEmpty(idsToDelete)) {
                 acquUserEntityRepository.deleteByIds(idsToDelete);
             }
             // Save the new records
