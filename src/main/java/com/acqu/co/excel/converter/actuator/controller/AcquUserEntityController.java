@@ -3,20 +3,17 @@ package com.acqu.co.excel.converter.actuator.controller;
 import com.acqu.co.excel.converter.actuator.exception.ServiceStatus;
 import com.acqu.co.excel.converter.actuator.model.AcquUserEntity;
 import com.acqu.co.excel.converter.actuator.model.specs.AcquUserEntitySearchParams;
-import com.acqu.co.excel.converter.actuator.model.specs.CustomPageable;
-import com.acqu.co.excel.converter.actuator.model.specs.CustomSort;
 import com.acqu.co.excel.converter.actuator.service.AcquUserEntityService;
 import com.acqu.co.excel.converter.actuator.util.DateUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,14 +29,11 @@ import static com.acqu.co.excel.converter.actuator.util.Constants.*;
 @RestController
 @RequestMapping("/api/acqu-users")
 @Slf4j
+@AllArgsConstructor
 public class AcquUserEntityController {
 
     private final AcquUserEntityService acquUserEntityService;
 
-    @Autowired
-    public AcquUserEntityController(AcquUserEntityService acquUserEntityService) {
-        this.acquUserEntityService = acquUserEntityService;
-    }
 
     @PostMapping(value = "/upload-csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(
@@ -57,11 +51,7 @@ public class AcquUserEntityController {
             return new ResponseEntity<>(users, HttpStatus.CREATED);
         } catch (Exception e) {
             log.error("Unexpected error: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ServiceStatus(
-                    "Unexpected error occurred",
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    e.getMessage()
-            ));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).<List<AcquUserEntity>>build();
         }
     }
 
@@ -73,7 +63,7 @@ public class AcquUserEntityController {
     }
 
     @GetMapping("/export")
-    public ResponseEntity<?>  exportAcquUserEntities() {
+    public ResponseEntity<?> exportAcquUserEntities() {
         try {
             InputStreamResource resource = acquUserEntityService.exportXls();
             HttpHeaders headers = new HttpHeaders();
@@ -86,11 +76,7 @@ public class AcquUserEntityController {
                     .body(resource);
         } catch (IOException e) {
             log.error("Unexpected error: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ServiceStatus(
-                    "Unexpected error occurred",
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    e.getMessage()
-            ));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).<InputStreamResource>build();
         }
     }
 
@@ -110,25 +96,18 @@ public class AcquUserEntityController {
             return new ResponseEntity<>(users, HttpStatus.CREATED);
         } catch (Exception e) {
             log.error("Unexpected error: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ServiceStatus(
-                    "Unexpected error occurred",
-                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    e.getMessage()
-            ));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).<List<AcquUserEntity>>build();
         }
     }
 
-    @PostMapping(value = "/paging", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/paging", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "paging with AcquUserEntity data",
             description = "paging user data in Excel format."
     )
     public ResponseEntity<Page<AcquUserEntity>> getAcquUserEntityBySearch(
-         @RequestBody   AcquUserEntitySearchParams acquUserEntitySearchParams) {
-
-
+            @RequestBody AcquUserEntitySearchParams acquUserEntitySearchParams) {
         Page<AcquUserEntity> users = acquUserEntityService.findAll(acquUserEntitySearchParams);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-
 }
