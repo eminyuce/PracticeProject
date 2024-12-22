@@ -11,9 +11,9 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -109,4 +109,41 @@ public class ExcelHelper {
         }
     }
 
+    // After
+    public List<AcquUserEntity> parseCsvFileForAcquUserEntity(MultipartFile file) {
+        List<AcquUserEntity> acquUserEntities = new ArrayList<>();
+        Set<String> existingIds = new HashSet<>();
+
+        try (var reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            String line;
+            boolean isFirstLine = true;
+
+            while ((line = reader.readLine()) != null) {
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    continue; // Skip header row
+                }
+
+                String[] fields = line.split(",");
+                AcquUserEntity entity = new AcquUserEntity();
+                String userEntityId = fields[0];
+
+                // Check for duplicate userEntityId
+                if (existingIds.contains(userEntityId)) {
+                    throw new ExcelImportException("Duplicate ID found: " + userEntityId);
+                }
+                existingIds.add(userEntityId); // Add to the set for tracking
+
+                entity.setUserEntityId(userEntityId);
+                entity.setUserName(fields[1]);
+                entity.setCreatedDate(new SimpleDateFormat("yyyy-MM-dd").parse(fields[2]));
+                entity.setUpdatedDate(new SimpleDateFormat("yyyy-MM-dd").parse(fields[3]));
+                acquUserEntities.add(entity);
+            }
+        } catch (IOException  | ParseException e) {
+            throw new ExcelImportException("Failed to parse CSV file", e);
+        }
+
+        return acquUserEntities;
+    }
 }

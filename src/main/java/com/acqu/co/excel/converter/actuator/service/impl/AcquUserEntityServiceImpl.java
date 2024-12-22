@@ -4,7 +4,6 @@ import com.acqu.co.excel.converter.actuator.exception.ExcelImportException;
 import com.acqu.co.excel.converter.actuator.model.AcquUserEntity;
 import com.acqu.co.excel.converter.actuator.model.specs.AcquUserEntitySearchParams;
 import com.acqu.co.excel.converter.actuator.model.specs.AcquUserEntitySpecification;
-import com.acqu.co.excel.converter.actuator.model.specs.CustomPageable;
 import com.acqu.co.excel.converter.actuator.repo.AcquUserEntityRepository;
 import com.acqu.co.excel.converter.actuator.service.AcquUserEntityService;
 import com.acqu.co.excel.converter.actuator.util.ExcelHelper;
@@ -12,9 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,7 +27,6 @@ public class AcquUserEntityServiceImpl implements AcquUserEntityService {
     private AcquUserEntityRepository acquUserEntityRepository;
     @Autowired
     private ExcelHelper excelHelper;
-
 
     @Override
     public List<AcquUserEntity> findAll(Sort sort) {
@@ -49,13 +45,12 @@ public class AcquUserEntityServiceImpl implements AcquUserEntityService {
         List<AcquUserEntity> users = excelHelper.parseExcelFileForAcquUserEntity(file);
         // Delete existing records by their IDs
         List<String> idsToDelete = users.stream()
-                .map(AcquUserEntity::getUserEntityId) // Use the correct getter
+                .map(AcquUserEntity::getUserEntityId)
                 .toList();
         if (!idsToDelete.isEmpty()) {
             acquUserEntityRepository.deleteByIds(idsToDelete);
         }
-
-// Save the new records
+        // Save the new records
         return acquUserEntityRepository.saveAll(users);
     }
 
@@ -64,5 +59,25 @@ public class AcquUserEntityServiceImpl implements AcquUserEntityService {
         return acquUserEntityRepository.findAll(
                 new AcquUserEntitySpecification(acquUserEntitySearchParams.getSearch()),
                 acquUserEntitySearchParams.getPageable().toPageRequest());
+    }
+
+    @Override
+    public List<AcquUserEntity> uploadAcquUserEntityFromCsv(MultipartFile file) {
+        List<AcquUserEntity> users;
+        try {
+            users = excelHelper.parseCsvFileForAcquUserEntity(file);
+            // Delete existing records by their IDs
+            List<String> idsToDelete = users.stream()
+                    .map(AcquUserEntity::getUserEntityId)
+                    .toList();
+            if (!idsToDelete.isEmpty()) {
+                acquUserEntityRepository.deleteByIds(idsToDelete);
+            }
+            // Save the new records
+            return acquUserEntityRepository.saveAll(users);
+        } catch (ExcelImportException e) {
+            log.error("Error uploading AcquUserEntity from CSV", e);
+            throw new RuntimeException("Failed to upload AcquUserEntity from CSV", e);
+        }
     }
 }

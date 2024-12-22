@@ -26,4 +26,6 @@ public interface AcquUserEntityService {
     List<AcquUserEntity> uploadAcquUserEntityFromExcel(MultipartFile file) throws IOException;
 
     Page<AcquUserEntity> findAll(AcquUserEntitySearchParams acquUserEntitySearchParams);
+
+    List<AcquUserEntity> uploadAcquUserEntityFromCsv(MultipartFile file);
 }

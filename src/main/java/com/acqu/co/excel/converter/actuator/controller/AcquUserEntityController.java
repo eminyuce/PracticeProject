@@ -41,6 +41,30 @@ public class AcquUserEntityController {
         this.acquUserEntityService = acquUserEntityService;
     }
 
+    @PostMapping(value = "/upload-csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(
+            summary = "Upload a CSV file with AcquUserEntity data",
+            description = "Upload a file containing user data in CSV format.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
+    )
+    public ResponseEntity<?> uploadAcquUserEntityFromCsv(
+            @Parameter(description = "CSV file to upload", required = true)
+            @RequestPart("file") MultipartFile file) {
+        try {
+            List<AcquUserEntity> users = acquUserEntityService.uploadAcquUserEntityFromCsv(file);
+            return new ResponseEntity<>(users, HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error("Unexpected error: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ServiceStatus(
+                    "Unexpected error occurred",
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    e.getMessage()
+            ));
+        }
+    }
+
     @GetMapping
     public ResponseEntity<List<AcquUserEntity>> getAllAcquUsers(@RequestParam(required = false) String sort) {
         Sort sorting = Sort.by(sort != null ? sort : "userEntityId");
