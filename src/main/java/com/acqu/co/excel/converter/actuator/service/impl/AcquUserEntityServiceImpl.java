@@ -45,7 +45,7 @@ public class AcquUserEntityServiceImpl implements AcquUserEntityService {
     public List<AcquUserEntity> uploadAcquUserEntityFromExcel(MultipartFile file) throws IOException, ExcelImportException {
         List<AcquUserEntity> users = excelHelper.parseExcelFileForAcquUserEntity(file);
         // Delete existing records by their IDs
-        List<String> idsToDelete = users.stream()
+        var idsToDelete = users.stream()
                 .map(AcquUserEntity::getUserEntityId)
                 .toList();
         if (CollectionUtils.isNotEmpty(idsToDelete)) {
@@ -68,7 +68,7 @@ public class AcquUserEntityServiceImpl implements AcquUserEntityService {
         try {
             users = excelHelper.parseCsvFileForAcquUserEntity(file);
             // Delete existing records by their IDs
-            List<String> idsToDelete = users.stream()
+            var idsToDelete = users.stream()
                     .map(AcquUserEntity::getUserEntityId)
                     .toList();
             if (CollectionUtils.isNotEmpty(idsToDelete)) {
@@ -80,5 +80,10 @@ public class AcquUserEntityServiceImpl implements AcquUserEntityService {
             log.error("Error uploading AcquUserEntity from CSV", e);
             throw new RuntimeException("Failed to upload AcquUserEntity from CSV", e);
         }
+    }
+
+    @Override
+    public List<String> getPhoneModels(Sort sorting) {
+        return acquUserEntityRepository.getPhoneModels(sorting);
     }
 }

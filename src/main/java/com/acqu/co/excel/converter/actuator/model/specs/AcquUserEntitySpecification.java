@@ -6,10 +6,10 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class AcquUserEntitySpecification implements Specification<AcquUserEntity> {
 
@@ -22,11 +22,54 @@ public class AcquUserEntitySpecification implements Specification<AcquUserEntity
     @Override
     public Predicate toPredicate(Root<AcquUserEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
-        if (StringUtils.hasText(acquUserEntitySearchParams.getSearch())) {
-            predicates.add(cb.or(
-                    cb.like(root.get("userName"), "%" + acquUserEntitySearchParams.getSearch() + "%")
-            ));
+
+        // Apply search criteria if present
+        if (acquUserEntitySearchParams.getCriteriaList() != null) {
+            for (SearchCriteria criteria : acquUserEntitySearchParams.getCriteriaList()) {
+                String operation = criteria.getOperator().toLowerCase();
+                String field = criteria.getField();
+                String value = criteria.getValue();
+
+                switch (operation) {
+                    case "=":
+                        predicates.add(cb.equal(root.get(field), value));
+                        break;
+                    case "like":
+                        predicates.add(cb.like(root.get(field), "%" + value + "%"));
+                        break;
+                    case ">":
+                        predicates.add(cb.greaterThan(root.get(field), value));
+                        break;
+                    case "<":
+                        predicates.add(cb.lessThan(root.get(field), value));
+                        break;
+                    case ">=":
+                        predicates.add(cb.greaterThanOrEqualTo(root.get(field), value));
+                        break;
+                    case "<=":
+                        predicates.add(cb.lessThanOrEqualTo(root.get(field), value));
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid operator: " + operation);
+                }
+            }
         }
-        return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+
+        // Apply date range filters
+        if (acquUserEntitySearchParams.getCreatedFrom() != null) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get("createdDate"), acquUserEntitySearchParams.getCreatedFrom()));
+        }
+        if (acquUserEntitySearchParams.getCreatedTo() != null) {
+            predicates.add(cb.lessThanOrEqualTo(root.get("createdDate"), acquUserEntitySearchParams.getCreatedTo()));
+        }
+        if (acquUserEntitySearchParams.getUpdatedFrom() != null) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get("updatedDate"), acquUserEntitySearchParams.getUpdatedFrom()));
+        }
+        if (acquUserEntitySearchParams.getUpdatedTo() != null) {
+            predicates.add(cb.lessThanOrEqualTo(root.get("updatedDate"), acquUserEntitySearchParams.getUpdatedTo()));
+        }
+
+        // Combine all predicates with AND
+        return cb.and(predicates.toArray(new Predicate[0]));
     }
 }

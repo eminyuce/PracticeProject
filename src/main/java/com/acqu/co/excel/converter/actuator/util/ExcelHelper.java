@@ -26,7 +26,7 @@ public class ExcelHelper {
     public List<AcquUserEntity> parseExcelFileForAcquUserEntity(MultipartFile file) throws IOException, ExcelImportException {
         List<AcquUserEntity> acquUserEntities = new ArrayList<>();
         // Create a Set to track unique userEntityIds
-        Set<String> existingIds = new HashSet<>();
+        Set<Long> existingIds = new HashSet<>();
 
         try (XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream())) {
             XSSFSheet sheet = workbook.getSheetAt(0);
@@ -37,7 +37,7 @@ public class ExcelHelper {
                 }
 
                 AcquUserEntity entity = new AcquUserEntity();
-                String userEntityId = row.getCell(0).getStringCellValue();
+                Long userEntityId = Long.valueOf(row.getCell(0).getStringCellValue());
 
                 // Check for duplicate userEntityId
                 if (existingIds.contains(userEntityId)) {
@@ -112,7 +112,7 @@ public class ExcelHelper {
     // After
     public List<AcquUserEntity> parseCsvFileForAcquUserEntity(MultipartFile file) {
         List<AcquUserEntity> acquUserEntities = new ArrayList<>();
-        Set<String> existingIds = new HashSet<>();
+        Set<Long> existingIds = new HashSet<>();
 
         try (var reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             String line;
@@ -126,7 +126,7 @@ public class ExcelHelper {
 
                 String[] fields = line.split(",");
                 AcquUserEntity entity = new AcquUserEntity();
-                String userEntityId = fields[0];
+                Long userEntityId = Long.valueOf(fields[0]);
 
                 // Check for duplicate userEntityId
                 if (existingIds.contains(userEntityId)) {

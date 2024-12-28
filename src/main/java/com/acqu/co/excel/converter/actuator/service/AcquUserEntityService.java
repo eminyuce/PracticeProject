@@ -28,4 +28,6 @@ public interface AcquUserEntityService {
     Page<AcquUserEntity> findAll(AcquUserEntitySearchParams acquUserEntitySearchParams);
 
     List<AcquUserEntity> uploadAcquUserEntityFromCsv(MultipartFile file);
+
+    List<String> getPhoneModels(Sort sorting);
 }

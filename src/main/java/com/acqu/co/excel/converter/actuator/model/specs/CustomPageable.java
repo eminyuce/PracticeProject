@@ -1,4 +1,5 @@
 package com.acqu.co.excel.converter.actuator.model.specs;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -9,6 +10,9 @@ public class CustomPageable {
     private int page=0;
     private int size=20;
     private List<CustomSort> customSort;
+
+    public CustomPageable() {
+    }
 
     // Constructor
     public CustomPageable(int page, int size, List<CustomSort> customSort) {
@@ -44,19 +48,25 @@ public class CustomPageable {
 
     // Convert CustomPageable to PageRequest
     public Pageable toPageRequest() {
-        // Create a Sort.Order array based on the customSort list
-        Sort.Order[] orders = new Sort.Order[customSort.size()];
+        if(CollectionUtils.isEmpty(customSort)){
+            // Return PageRequest with the default sorting criteria
+            return PageRequest.of(this.page, this.size);
+        }else{
+            // Create a Sort.Order array based on the customSort list
+            Sort.Order[] orders = new Sort.Order[customSort.size()];
 
-        for (int i = 0; i < customSort.size(); i++) {
-            CustomSort sort = customSort.get(i);
-            Sort.Order order = sort.getDirection().equalsIgnoreCase("ASC") ?
-                    Sort.Order.asc(sort.getField()) :
-                    Sort.Order.desc(sort.getField());
-            orders[i] = order;
+            for (int i = 0; i < customSort.size(); i++) {
+                CustomSort sort = customSort.get(i);
+                Sort.Order order = sort.getDirection().equalsIgnoreCase("ASC") ?
+                        Sort.Order.asc(sort.getField()) :
+                        Sort.Order.desc(sort.getField());
+                orders[i] = order;
+            }
+
+            // Return PageRequest with the multiple sorting criteria
+            return PageRequest.of(this.page, this.size, Sort.by(orders));
         }
 
-        // Return PageRequest with the multiple sorting criteria
-        return PageRequest.of(this.page, this.size, Sort.by(orders));
     }
 }
 

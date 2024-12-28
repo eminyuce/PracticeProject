@@ -20,6 +20,8 @@ public interface AcquUserEntityRepository extends JpaRepository<AcquUserEntity, 
     @Transactional
     @Modifying
     @Query(value = "DELETE FROM AcquUserEntity WHERE user_entity_id IN (:ids)", nativeQuery = true)
-    void deleteByIds(List<String> ids);
+    void deleteByIds(List<Long> ids);
 
+    @Query("SELECT DISTINCT a.phoneModel FROM AcquUserEntity a")
+    List<String> getPhoneModels(Sort sorting);
 }

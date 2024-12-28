@@ -110,6 +110,14 @@ public class AcquUserEntityController {
         Page<AcquUserEntity> users = acquUserEntityService.findAll(acquUserEntitySearchParams);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-
+    @GetMapping("/phone-models")
+    @Operation(
+            summary = "paging with AcquUserEntity phone-models",
+            description = "paging phone-models data "
+    )
+    public ResponseEntity<List<String>> getPhoneModels(@RequestParam(required = false) String sort) {
+        Sort sorting = Sort.by(sort != null ? sort : "phoneModel");
+        return new ResponseEntity<>(acquUserEntityService.getPhoneModels(sorting), HttpStatus.OK);
+    }
 
 }
