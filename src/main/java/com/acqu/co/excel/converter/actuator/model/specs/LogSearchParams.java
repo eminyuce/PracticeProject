@@ -11,12 +11,10 @@ import java.util.List;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class AcquUserEntitySearchParams {
+public class LogSearchParams {
     private List<SearchCriteria> criteriaList; // A list of criteria for search
     private LocalDate createdFrom;            // Start date for creation range
     private LocalDate createdTo;              // End date for creation range
-    private LocalDate updatedFrom;            // Start date for update range
-    private LocalDate updatedTo;              // End date for update range
 
     // Custom Pageable field as per provided snippet
     private CustomPageable pageable = new CustomPageable();

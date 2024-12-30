@@ -4,8 +4,11 @@ import com.acqu.co.excel.converter.actuator.exception.ServiceStatus;
 import com.acqu.co.excel.converter.actuator.model.AcquUserEntity;
 import com.acqu.co.excel.converter.actuator.model.specs.AcquUserEntitySearchParams;
 import com.acqu.co.excel.converter.actuator.model.specs.BulkStatusRequest;
+import com.acqu.co.excel.converter.actuator.model.specs.SearchFieldOption;
+import com.acqu.co.excel.converter.actuator.model.specs.SearchTypeOption;
 import com.acqu.co.excel.converter.actuator.service.AcquUserEntityService;
 import com.acqu.co.excel.converter.actuator.util.DateUtil;
+import com.acqu.co.excel.converter.actuator.util.ReflectionUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.acqu.co.excel.converter.actuator.util.Constants.*;
@@ -190,4 +194,21 @@ public class AcquUserEntityController {
         return ResponseEntity.ok(auditTrail);
     }
 
+    @GetMapping("/search-field-options")
+    public List<SearchFieldOption> getSearchFieldOptions() {
+        // Use reflection to generate search field options from the AcquUserEntity class
+        return ReflectionUtil.getSearchFieldOptions(AcquUserEntity.class,Arrays.asList(
+                "userEntityId" // Add other fields to exclude here
+        ));
+    }
+    @GetMapping("/search-type-options")
+    public List<SearchTypeOption> getSearchTypeOptions() {
+        return Arrays.asList(
+                new SearchTypeOption("like", "Contains"),
+                new SearchTypeOption("=", "Equals To"),
+                new SearchTypeOption("<>", "Not Equals To"),
+                new SearchTypeOption(">", "Greater than"),
+                new SearchTypeOption("<", "Less than")
+        );
+    }
 }
