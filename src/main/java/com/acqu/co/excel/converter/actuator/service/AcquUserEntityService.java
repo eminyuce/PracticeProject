@@ -2,6 +2,7 @@ package com.acqu.co.excel.converter.actuator.service;
 
 import com.acqu.co.excel.converter.actuator.model.AcquUserEntity;
 import com.acqu.co.excel.converter.actuator.model.specs.AcquUserEntitySearchParams;
+import com.acqu.co.excel.converter.actuator.model.specs.BulkStatusRequest;
 import com.acqu.co.excel.converter.actuator.model.specs.CustomPageable;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
@@ -30,4 +31,20 @@ public interface AcquUserEntityService {
     List<AcquUserEntity> uploadAcquUserEntityFromCsv(MultipartFile file);
 
     List<String> getPhoneModels(Sort sorting);
+
+    void deleteById(Long id);
+
+    AcquUserEntity updateUser(Long id, AcquUserEntity user);
+
+    AcquUserEntity createUser(AcquUserEntity user);
+
+    void updateBulkStatus(BulkStatusRequest bulkStatusRequest);
+
+    void deleteDeletedRecords();
+
+    InputStreamResource exportToExcel(AcquUserEntitySearchParams acquUserEntitySearchParams);
+
+    AcquUserEntity updatePhoneModel(Long id, String phoneModel);
+
+    List<String> getAuditTrail(Long id);
 }

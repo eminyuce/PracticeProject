@@ -3,6 +3,7 @@ package com.acqu.co.excel.converter.actuator.controller;
 import com.acqu.co.excel.converter.actuator.exception.ServiceStatus;
 import com.acqu.co.excel.converter.actuator.model.AcquUserEntity;
 import com.acqu.co.excel.converter.actuator.model.specs.AcquUserEntitySearchParams;
+import com.acqu.co.excel.converter.actuator.model.specs.BulkStatusRequest;
 import com.acqu.co.excel.converter.actuator.service.AcquUserEntityService;
 import com.acqu.co.excel.converter.actuator.util.DateUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,8 +62,7 @@ public class AcquUserEntityController {
         List<AcquUserEntity> users = acquUserEntityService.findAll(sorting);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-
-    @GetMapping("/export")
+    @PostMapping(value = "/export_all", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> exportAcquUserEntities() {
         try {
             InputStreamResource resource = acquUserEntityService.exportXls();
@@ -118,6 +118,76 @@ public class AcquUserEntityController {
     public ResponseEntity<List<String>> getPhoneModels(@RequestParam(required = false) String sort) {
         Sort sorting = Sort.by(sort != null ? sort : "phoneModel");
         return new ResponseEntity<>(acquUserEntityService.getPhoneModels(sorting), HttpStatus.OK);
+    }
+
+    @PostMapping("/paging")
+    @Operation(summary = "Get paginated AcquUserEntities", description = "Retrieve users based on search parameters.")
+    public ResponseEntity<Page<AcquUserEntity>> getUsers(@RequestBody AcquUserEntitySearchParams params) {
+        Page<AcquUserEntity> users = acquUserEntityService.findAll(params);
+        return ResponseEntity.ok(users);
+    }
+
+    @PostMapping
+    @Operation(summary = "Create a new user", description = "Create a new AcquUserEntity.")
+    public ResponseEntity<AcquUserEntity> createUser(@RequestBody AcquUserEntity user) {
+        AcquUserEntity createdUser = acquUserEntityService.createUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update an existing user", description = "Update an AcquUserEntity by ID.")
+    public ResponseEntity<AcquUserEntity> updateUser(@PathVariable Long id, @RequestBody AcquUserEntity user) {
+        AcquUserEntity updatedUser = acquUserEntityService.updateUser(id,user);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a user", description = "Delete an AcquUserEntity by ID.")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        acquUserEntityService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/phone-model")
+    @Operation(summary = "Update a user's phone model", description = "Update the phone model of a user by ID.")
+    public ResponseEntity<AcquUserEntity> updatePhoneModel(
+            @PathVariable Long id, @RequestBody String phoneModel) {
+        AcquUserEntity updatedUser = acquUserEntityService.updatePhoneModel(id, phoneModel);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @PutMapping("/bulk-status")
+    @Operation(summary = "Update bulk status", description = "Update the status for multiple users.")
+    public ResponseEntity<Void> updateBulkStatus(
+            @RequestBody BulkStatusRequest bulkStatusRequest) {
+        acquUserEntityService.updateBulkStatus(bulkStatusRequest);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/deleted")
+    @Operation(summary = "Delete all deleted records", description = "Remove all records marked as deleted.")
+    public ResponseEntity<Void> deleteDeletedRecords() {
+        acquUserEntityService.deleteDeletedRecords();
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(path = "/export", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Export to Excel", description = "Export all users to an Excel file.")
+    public ResponseEntity<InputStreamResource> exportToExcel(@RequestBody AcquUserEntitySearchParams acquUserEntitySearchParams) {
+        InputStreamResource resource = acquUserEntityService.exportToExcel(acquUserEntitySearchParams);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=users.xlsx");
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
+
+    @GetMapping("/{id}/audit")
+    @Operation(summary = "Get audit trail", description = "Retrieve the audit trail for a user by ID.")
+    public ResponseEntity<List<String>> getAuditTrail(@PathVariable Long id) {
+        List<String> auditTrail = acquUserEntityService.getAuditTrail(id);
+        return ResponseEntity.ok(auditTrail);
     }
 
 }
